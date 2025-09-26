@@ -1,0 +1,9 @@
+{
+  "id": "crackinghelper",
+  "name": "${name}",
+  "authors": ["commandf1"],
+  "version": "${version}",
+  "description": "${description}",
+  "dependencies": [],
+  "main": "space.commandf1.crackinghelper.velocity.VelocityCrackingHelperPlugin"
+}

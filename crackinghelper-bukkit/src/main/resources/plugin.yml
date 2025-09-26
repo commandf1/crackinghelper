@@ -1,0 +1,9 @@
+name: 1CrackingHelper
+author: commandf1
+version: ${version}
+main: space.commandf1.crackinghelper.bukkit.BukkitCrackingHelperPlugin
+api-version: '1.8.8'
+description: ${description}
+commands:
+  crackinghelper:
+    description: 'CrackingHelper'

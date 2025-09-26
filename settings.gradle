@@ -1,0 +1,5 @@
+rootProject.name = 'crackinghelper'
+include 'crackinghelper-common'
+include 'crackinghelper-bukkit'
+include 'crackinghelper-velocity'
+include 'crackinghelper-bungee'

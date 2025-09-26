@@ -1,0 +1,6 @@
+name: 1CrackingHelper
+author: commandf1
+version: ${version}
+main: space.commandf1.crackinghelper.bungee.BungeeCrackingHelperPlugin
+api-version: '1.8.8'
+description: ${description}

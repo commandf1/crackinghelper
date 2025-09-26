@@ -1,0 +1,8 @@
+# CrackingHelper by commandf1
+
+[network-tracker]
+# Should we track every network connection?
+enabled = true
+
+# Should we detect the response of the network connection?
+detect-response = true

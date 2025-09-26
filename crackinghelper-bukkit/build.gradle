@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+}
+
+group = 'space.commandf1'
+
+repositories {
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/groups/public/' }
+    maven { url 'https://repo.hpfxd.com/releases/' }
+    maven { url 'https://repo.andrei1058.dev/releases/' }
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://repo.dmulloy2.net/repository/public/' }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url 'https://repo.codemc.io/repository/maven-public/' }
+    maven { url 'https://repo.codemc.io/repository/maven-releases/' }
+    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
+    maven { url 'https://repo.codemc.io/repository/nms/' }
+    maven { url 'https://simonsator.de/repo/' }
+    maven { url 'https://maven.citizensnpcs.co/repo' }
+    maven { url 'https://repo.alessiodp.com/releases/' }
+    maven { url 'https://repo.andrei1058.dev/releases/' }
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://repo.glaremasters.me/repository/concuncan/' }
+    maven { url 'https://maven.leafmc.one/snapshots/'}
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+processResources {
+    def props = [version: this.version, name: parent.name, description: this.description]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+
+    implementation project(':crackinghelper-common')
+    compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+test {
+    useJUnitPlatform()
+}

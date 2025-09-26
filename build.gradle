@@ -1,0 +1,93 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '8.3.0'
+    id 'maven-publish'
+    id 'application'
+}
+
+allprojects {
+    group = 'space.commandf1'
+    version = '1.0-SNAPSHOT'
+    description = 'A simple plugin used to crack other plugins'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId project.group
+                artifactId project.name
+                version project.version
+                from components.java
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += [
+                '--add-exports',
+                'java.base/jdk.internal.reflect=ALL-UNNAMED'
+        ]
+    }
+
+    tasks.withType(JavaExec).tap {
+        configureEach {
+            jvmArgs += [
+                    '-Dorg.bytedeco.javacpp.maxbytes=4G',
+                    '-Dorg.bytedeco.javacpp.maxphysicalbytes=8G',
+                    '--add-opens',
+                    'java.base/jdk.internal.reflect=ALL-UNNAMED'
+            ]
+        }
+    }
+}
+
+build {
+    dependsOn shadowJar
+}
+
+shadowJar {
+    mainClassName = 'space.commandf1.crackinghelper.common.run.CrackingHelperMain'
+
+    relocate 'net.bytebuddy', 'space.commandf1.crackinghelper.libs.net.bytebuddy'
+    relocate 'org.jetbrains', 'space.commandf1.crackinghelper.libs.org.jetbrains'
+    relocate 'org.intellij', 'space.commandf1.crackinghelper.libs.org.intellij'
+    relocate 'org.codehaus', 'space.commandf1.crackinghelper.libs.org.codehaus'
+    relocate 'org.benf', 'space.commandf1.crackinghelper.libs.org.benf'
+
+    manifest {
+        attributes(
+                'Can-Redefine-Classes': 'true',
+                'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':crackinghelper-common')
+    implementation project(':crackinghelper-bukkit')
+    implementation project(':crackinghelper-velocity')
+    implementation project(':crackinghelper-bungee')
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+test {
+    useJUnitPlatform()
+}
