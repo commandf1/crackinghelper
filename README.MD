@@ -87,7 +87,7 @@ This tool offers powerful runtime inspection capabilities, including class loadi
 
 ## 许可证 (License)
 
-本项目基于 [GNU General Public License v3.0](https://mit-license.org/) 许可证发行。
+本项目基于 [MIT License](https://mit-license.org/) 许可证发行。
 
 ---
 
