@@ -41,6 +41,6 @@ public class ListClassesCommand extends SubCommand {
             val classes = ClassUtil.getAllClassesByClassLoader(loader, instrumentation);
             sender.sendMessage(String.format("Loaded classes(%s): ", classes.size()));
             classes.forEach((name, clazz) -> sender.sendMessage(name));
-        }, () -> sender.sendMessage("Classloader with hashcode " + classloaderHashcode +" not found"));
+        }, () -> sender.sendMessage("Classloader with hashcode " + classloaderHashcode + " not found"));
     }
 }
