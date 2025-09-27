@@ -21,5 +21,6 @@ public abstract class CrackingHelperCommand extends CommandBase {
         this.registerSubCommand(new PrintStackTraceCommand());
         this.registerSubCommand(new ListClassLoadersCommand());
         this.registerSubCommand(new DecompileCommand());
+        this.registerSubCommand(new BlockMethodCommand());
     }
 }
