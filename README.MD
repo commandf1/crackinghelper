@@ -1,104 +1,156 @@
-
----
-
 # CrackingHelper
 
-[![License](https://img.shields.io/github/license/commandf1/crackinghelper)](https://mit-license.org/)
+CrackingHelper 是一个用于分析、调试和破解其他插件的多功能工具，支持 Bukkit、BungeeCord 和 Velocity 平台。它提供了强大的类加载器分析、网络监控、类反编译等功能，是插件开发者和服务器管理员的理想工具。
 
-## 简介 (Introduction in Chinese)
+> [English](README_EN.MD) | 简体中文
 
-CrackingHelper 是一个多功能的 Minecraft 服务端插件，旨在帮助开发者分析、调试和“破解”其他插件。它支持 Bukkit/Spigot/Paper、BungeeCord 和 Velocity 平台。
+## 功能特性
 
-该工具提供了强大的运行时检查功能，包括类加载追踪、网络请求监控、字节码反编译以及动态类加载与执行等。这些功能对于深入理解插件行为、排查问题或进行安全研究非常有用。
+### 1. 类加载器分析
+- 列出所有已加载的类加载器
+- 查看特定类加载器加载的所有类
+- 分析类的详细信息，包括字段、方法、注解等
 
-**注意**: 此工具应仅用于学习、开发和授权的安全测试目的。请遵守当地法律法规，并尊重软件版权。
+### 2. 类操作
+- 反编译指定类查看源代码
+- 将类转储为 .class 文件
+- 动态加载并执行 Java 代码
+- 阻止特定方法被调用
 
-### 主要特性 (Key Features)
+### 3. 网络监控
+- 监控插件的网络连接
+- 捕获网络响应内容
+- 识别发起网络请求的插件
 
-- **跨平台支持**: 兼容 Bukkit/Spigot/Paper, BungeeCord, 和 Velocity.
-- **类操作**:
-    - 列出已加载的类和类加载器 (`listclasses`, `listclassloaders`)
-    - 转储 (dump) 类的字节码以便进一步分析
-    - 反编译类文件查看源码 ([decompile](file://D:\Projects\crackinghelper\crackinghelper-common\src\main\java\space\commandf1\crackinghelper\common\util\ClassUtil.java#L26-L28))
-    - 分析类结构，显示详细信息 (`analysisclass`)
-    - 动态加载并执行指定类的 [main](file://D:\Projects\crackinghelper\crackinghelper-common\src\main\java\space\commandf1\crackinghelper\common\run\CrackingHelperMain.java#L6-L8) 方法 (`loadclass`)
-- **运行时追踪**:
-    - 追踪特定类的方法调用 (`trackclasses`)
-    - 监控 HTTP/HTTPS 网络请求及响应 (`network-tracker`)
-    - 打印当前线程堆栈跟踪 (`printstacktrace`)
-- **命令行界面**: 提供直观的 [/crackinghelper](file://D:\Projects\crackinghelper\build\scripts\crackinghelper) 命令及其子命令进行交互。
+### 4. 方法跟踪
+- 跟踪方法调用
+- 记录方法调用的详细信息，包括调用者和参数
 
----
+### 5. 调试辅助
+- 打印当前线程的堆栈跟踪
+- 实时监控方法执行
 
-## Introduction (English)
+## 命令列表
 
-CrackingHelper is a versatile Minecraft server plugin designed to assist developers in analyzing, debugging, and "cracking" other plugins. It supports the Bukkit/Spigot/Paper, BungeeCord, and Velocity platforms.
+### 主命令
+[/crackinghelper](file://D:\Projects\crackinghelper\build\scripts\crackinghelper) - 主命令，所有功能都通过其子命令访问
 
-This tool offers powerful runtime inspection capabilities, including class loading tracking, network request monitoring, bytecode decompilation, and dynamic class loading and execution. These features are very useful for understanding plugin behavior in depth, troubleshooting issues, or conducting security research.
+### 子命令
 
-**Note:** This tool should be used for learning, development, and authorized security testing purposes only. Please comply with local laws and regulations and respect software copyrights.
-
-### Key Features
-
-- **Cross-platform Support**: Compatible with Bukkit/Spigot/Paper, BungeeCord, and Velocity.
-- **Class Operations**:
-    - List loaded classes and class loaders (`listclasses`, `listclassloaders`)
-    - Dump class bytecode for further analysis
-    - Decompile class files to view source code ([decompile](file://D:\Projects\crackinghelper\crackinghelper-common\src\main\java\space\commandf1\crackinghelper\common\util\ClassUtil.java#L26-L28))
-    - Analyze class structure and show detailed information (`analysisclass`)
-    - Dynamically load and execute the [main](file://D:\Projects\crackinghelper\crackinghelper-common\src\main\java\space\commandf1\crackinghelper\common\run\CrackingHelperMain.java#L6-L8) method of a specified class (`loadclass`)
-- **Runtime Tracking**:
-    - Track method calls of specific classes (`trackclasses`)
-    - Monitor HTTP/HTTPS network requests and responses (`network-tracker`)
-    - Print the current thread stack trace (`printstacktrace`)
-- **Command Line Interface**: Provides an intuitive [/crackinghelper](file://D:\Projects\crackinghelper\build\scripts\crackinghelper) command with sub-commands for interaction.
-
----
-
-## 构建 (Build)
-
-本项目使用 Gradle 构建。要构建项目，请在终端中执行以下命令：
-
-```bash
-./gradlew build
+#### `trackclass`
+跟踪指定方法的调用
+```
+/crackinghelper trackclass <方法名>
+示例: /crackinghelper trackclass org.bukkit.Bukkit#broadcastMessage
 ```
 
 
-构建后的 JAR 文件将位于各子项目下的 `build/libs` 目录中。
-
----
-
-## 使用说明 (Usage)
-
-1. 将对应平台的插件 JAR 文件放入服务器的 `plugins` 目录。
-2. 启动服务器。配置文件将在首次启动时自动生成。
-3. 使用 [/crackinghelper](file://D:\Projects\crackinghelper\build\scripts\crackinghelper) 命令开始探索其功能。
-
-例如：
-
+#### `dump`
+将类转储为 .class 文件
 ```
-/crackinghelper listclasses <classloader_hashcode>
-/crackinghelper decompile <classloader_hashcode> <full_class_name>
-/crackinghelper trackclasses <full_class_name>#<method_name>
+/crackinghelper dump <类加载器哈希码> <包名或*>
+示例: /crackinghelper dump abc123 *
 ```
 
 
----
+#### `listclasses`
+列出指定类加载器加载的所有类
+```
+/crackinghelper listclasses <类加载器哈希码>
+```
 
-## 许可证 (License)
 
-本项目基于 [MIT License](https://mit-license.org/) 许可证发行。
+#### `loadclass`
+动态加载并执行 Java 代码
+```
+/crackinghelper loadclass <父类加载器哈希码> <类名> <文件名> [参数...]
+```
 
----
 
-## 致谢 (Acknowledgements)
+#### `analysisclass`
+显示类的完整信息
+```
+/crackinghelper analysisclass <类加载器哈希码> <类名>
+```
 
-本项目依赖于众多优秀的开源库，包括但不限于:
 
-- [ByteBuddy](https://bytebuddy.net/)
-- [CFR](http://www.benf.org/other/cfr/)
-- [Lombok](https://projectlombok.org/)
+#### `printstacktrace`
+打印当前堆栈跟踪
+```
+/crackinghelper printstacktrace
+```
 
-感谢这些项目为本工具提供的强大支持。
 
----
+#### `listclassloaders`
+列出所有已加载的类加载器
+```
+/crackinghelper listclassloaders
+```
+
+
+#### `decompile`
+反编译指定类
+```
+/crackinghelper decompile <类加载器哈希码> <类名>
+```
+
+
+#### `blockmethod`
+阻止指定方法被调用
+```
+/crackinghelper blockmethod <方法名>
+示例: /crackinghelper blockmethod org.bukkit.Bukkit#broadcastMessage
+```
+
+
+## 必需的JVM参数
+
+为了确保 CrackingHelper 的所有功能正常运行，需要在启动服务器时添加以下 JVM 参数：
+
+```
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+--add-opens=java.base/java.net=ALL-UNNAMED
+--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED
+--add-opens=java.base/jdk.internal.reflect=ALL-UNNAMED
+--add-opens=java.base/sun.net.www.protocol.http=ALL-UNNAMED
+--add-opens=java.base/sun.net.www.protocol.https=ALL-UNNAMED
+```
+
+
+这些参数用于打开 Java 内部包的访问权限，使 CrackingHelper 能够进行类操作和网络监控。
+
+## 配置文件
+
+插件会自动生成配置文件，用于控制网络跟踪功能：
+
+```toml
+# 是否启用网络跟踪
+enabled = true
+
+# 是否检测网络响应
+detect-response = true
+```
+
+
+## 使用场景
+
+1. **插件开发者调试** - 分析其他插件的行为，调试自己的插件
+2. **服务器安全审计** - 监控插件的网络活动，检测潜在的安全风险
+3. **逆向工程** - 反编译和分析插件的工作原理
+4. **教学研究** - 学习 Java 类加载机制和字节码操作
+
+## 注意事项
+
+1. 本工具功能强大，请仅在合法授权的环境中使用
+2. 某些功能可能影响服务器性能，建议在测试环境中使用
+3. 使用网络监控功能时请注意隐私保护
+4. 动态加载代码功能存在安全风险，请谨慎使用
+
+## 支持平台
+
+- Bukkit/Spigot/Paper (1.8.8+)
+- BungeeCord/Waterfall
+- Velocity
+
+CrackingHelper 是插件开发和服务器管理的强大工具，可以帮助您深入了解插件的内部工作原理并进行有效的调试和分析。
