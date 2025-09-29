@@ -9,6 +9,7 @@ import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.jetbrains.annotations.NotNull;
 import space.commandf1.crackinghelper.common.util.cfr.InMemoryClassFileSource;
 import space.commandf1.crackinghelper.common.util.cfr.StringOutputSinkFactory;
+import space.commandf1.crackinghelper.common.util.processor.processors.ClassByteProcessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
@@ -24,6 +25,13 @@ import java.util.stream.Collectors;
 public class ClassUtil {
     private static final Object CLASS_LOADING_LOCK = new Object();
 
+    /**
+     * This method is deprecated because it may cause some exceptions
+     * use others
+     *
+     * @deprecated
+     * */
+    @Deprecated(since = "1.0-SNAPSHOT")
     public static String decompile(Class<?> clazz) {
         return decompile(getClassBytes(clazz), clazz.getName());
     }
@@ -92,6 +100,19 @@ public class ClassUtil {
         }
     }
 
+    public static boolean isLambda(Class<?> clazz) {
+        return clazz.getName().contains("$$Lambda");
+    }
+
+    /**
+     * Don't use this method for it may cause some exceptions
+     * use
+     * @see ClassByteProcessor
+     * instead
+     *
+     * @deprecated
+     * */
+    @Deprecated(since = "1.0-SNAPSHOT")
     public static byte @NotNull[] getClassBytes(@NotNull Class<?> clazz) {
         val make = new ByteBuddy().redefine(clazz).make();
         val toReturn = make.getBytes();

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -104,4 +105,13 @@ public class VelocityCrackingHelperPlugin {
         CommandManager.getManager().registerCommands(new VelocityCrackingHelperCommand());
     }
 
+    @Subscribe
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        if (instrumentation != null) {
+            this.processer.unloadForAgent();
+        }
+
+        instrumentation = null;
+        instance = null;
+    }
 }

@@ -6,10 +6,13 @@ import space.commandf1.crackinghelper.common.command.SubCommand;
 import space.commandf1.crackinghelper.common.convertor.plugin.IPluginController;
 import space.commandf1.crackinghelper.common.convertor.sender.CommonCommandSender;
 import space.commandf1.crackinghelper.common.util.ClassUtil;
+import space.commandf1.crackinghelper.common.util.processor.processors.ClassByteProcessor;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author commandf1
@@ -33,27 +36,32 @@ public class DumpCommand extends SubCommand {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void dumpClass(CommonCommandSender<?> sender, Class<?> clazz) {
-        try {
-            val classBytes = ClassUtil.getClassBytes(clazz);
-            val targetFile = new File(new File(IPluginController.getController().currentDataFolder(), "dumps"), clazz.getName().replace(".", File.separator) + ".class");
+    private void dumpClass(CommonCommandSender<?> sender, Set<Class<?>> classes) {
+        new ClassByteProcessor(classes, IPluginController.getController().getInstrumentation())
+                .after((clazz, classBytes) -> {
+                    val targetFile = new File(new File(IPluginController.getController().currentDataFolder(), "dumps"), clazz.getName().replace(".", File.separator) + ".class");
 
-            targetFile.delete();
-            File tmp = targetFile.getParentFile();
-            while (tmp != null && !tmp.exists()) {
-                tmp.mkdirs();
-            }
-            val result = Files.createFile(targetFile.toPath());
-            Files.write(result, classBytes);
-            IPluginController.getController().runTaskSynchronously(() ->
-                    sender.sendMessage("Dumped " + clazz.getName() + " to " + targetFile.getAbsolutePath())
-            );
-        } catch (Exception e) {
-            IPluginController.getController().runTaskSynchronously(() -> {
-                sender.sendMessage("Failed to dump " + clazz.getName());
-                sender.sendMessage("Exception: " + e.getLocalizedMessage());
-            });
-        }
+                    targetFile.delete();
+                    File tmp = targetFile.getParentFile();
+                    while (tmp != null && !tmp.exists()) {
+                        tmp.mkdirs();
+                    }
+
+                    try {
+                        val result = Files.createFile(targetFile.toPath());
+                        Files.write(result, classBytes);
+                        IPluginController.getController().runTaskSynchronously(() ->
+                                sender.sendMessage("Dumped " + clazz.getName() + " to " + targetFile.getAbsolutePath())
+                        );
+                    } catch (Exception e) {
+                        IPluginController.getController().runTaskSynchronously(() -> {
+                            sender.sendMessage("Failed to dump " + clazz.getName());
+                            sender.sendMessage("Exception: ");
+                            e.printStackTrace(System.err);
+                        });
+                    }
+                })
+                .process();
     }
 
     @Override
@@ -69,15 +77,16 @@ public class DumpCommand extends SubCommand {
         val instrumentation = IPluginController.getController().getInstrumentation();
         val classLoader = ClassUtil.getClassLoaderByHashCode(classLoaderHashcode, instrumentation);
         classLoader.ifPresentOrElse(loader -> IPluginController.getController().runTaskAsynchronously(() -> {
-            ClassUtil.getAllClassesByClassLoader(loader, instrumentation)
+            val classes = ClassUtil.getAllClassesByClassLoader(loader, instrumentation)
                     .values()
                     .stream()
                     .filter(clazz -> "*".equals(packageName) || clazz.getName().startsWith(packageName))
-                    .forEach(clazz -> this.dumpClass(sender, clazz));
+                    .collect(Collectors.toSet());
+            this.dumpClass(sender, classes);
 
             try {
                 val target = Class.forName(packageName);
-                this.dumpClass(sender, target);
+                this.dumpClass(sender, Set.of(target));
             } catch (ClassNotFoundException ignored) {
             }
         }), () -> sender.sendMessage("ClassLoader with hashcode " + classLoaderHashcode + " not found!"));

@@ -6,8 +6,10 @@ import space.commandf1.crackinghelper.common.command.SubCommand;
 import space.commandf1.crackinghelper.common.convertor.plugin.IPluginController;
 import space.commandf1.crackinghelper.common.convertor.sender.CommonCommandSender;
 import space.commandf1.crackinghelper.common.util.ClassUtil;
+import space.commandf1.crackinghelper.common.util.processor.processors.ClassByteProcessor;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author commandf1
@@ -48,7 +50,9 @@ public class DecompileCommand extends SubCommand {
         if (classLoader.isPresent()) {
             try {
                 val targetClass = Class.forName(className, false, classLoader.get());
-                sender.sendMessage("\n" + ClassUtil.decompile(targetClass));
+                new ClassByteProcessor(Set.of(targetClass), IPluginController.getController().getInstrumentation())
+                        .after((clazz, bytes) -> sender.sendMessage("\n" + ClassUtil.decompile(bytes, clazz.getName())))
+                        .process();
             } catch (ClassNotFoundException e) {
                 sender.sendMessage("Class with name " + className + " not found!");
             }

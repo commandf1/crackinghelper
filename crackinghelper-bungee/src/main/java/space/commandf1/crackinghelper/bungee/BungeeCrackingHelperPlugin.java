@@ -74,6 +74,11 @@ public class BungeeCrackingHelperPlugin extends Plugin {
 
     @Override
     public void onDisable() {
+        if (instrumentation != null) {
+            this.processer.unloadForAgent();
+        }
+
         instance = null;
+        instrumentation = null;
     }
 }

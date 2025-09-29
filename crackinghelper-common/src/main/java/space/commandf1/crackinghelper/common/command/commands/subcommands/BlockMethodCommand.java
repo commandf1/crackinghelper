@@ -9,7 +9,7 @@ import space.commandf1.crackinghelper.common.convertor.plugin.IPluginController;
 import space.commandf1.crackinghelper.common.convertor.sender.CommonCommandSender;
 
 import static net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy.*;
-import static net.bytebuddy.matcher.ElementMatchers.named;
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * @author commandf1

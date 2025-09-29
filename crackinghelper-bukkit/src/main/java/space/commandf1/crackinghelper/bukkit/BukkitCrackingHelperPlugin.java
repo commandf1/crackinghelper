@@ -35,11 +35,11 @@ public class BukkitCrackingHelperPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        instance = null;
         if (instrumentation != null) {
             processer.unloadForAgent();
         }
 
+        instance = null;
         instrumentation = null;
     }
 
