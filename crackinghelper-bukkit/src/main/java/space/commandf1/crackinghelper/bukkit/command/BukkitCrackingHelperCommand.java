@@ -44,7 +44,10 @@ public class BukkitCrackingHelperCommand extends CrackingHelperCommand
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+    public List<String> onTabComplete(@NotNull CommandSender commandSender,
+                                      @NotNull Command command,
+                                      @NotNull String s,
+                                      @NotNull String[] strings) {
         return super.onTabComplete(new BukkitCommandSender(commandSender), strings);
     }
 }
