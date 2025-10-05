@@ -1,6 +1,5 @@
 package space.commandf1.crackinghelper.common.tracker.trackers;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -68,7 +67,6 @@ public class MethodTracker implements ITracker<String>, AgentBuilder.Listener {
     public static class MethodTrackerInterceptor {
 
         @RuntimeType
-        @SneakyThrows
         public static Object intercept(@Origin Method method,
                                        @AllArguments Object[] args,
                                        @SuperCall Callable<?> callable) {
@@ -83,7 +81,11 @@ public class MethodTracker implements ITracker<String>, AgentBuilder.Listener {
                 System.out.println(" Arguments: " + Arrays.toString(args));
                 System.out.println(" TimeMillis: " + System.currentTimeMillis());
                 System.out.println("==================================================");
-                return callable.call();
+                try {
+                    return callable.call();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             val formattedStackTraceMessage = String.format("%s#%s(%s:%s)",
@@ -102,7 +104,11 @@ public class MethodTracker implements ITracker<String>, AgentBuilder.Listener {
             System.out.println(" TimeMillis: " + System.currentTimeMillis());
             System.out.println("==================================================");
 
-            return callable.call();
+            try {
+                return callable.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

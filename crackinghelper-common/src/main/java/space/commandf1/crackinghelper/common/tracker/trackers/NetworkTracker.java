@@ -18,8 +18,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.security.cert.Certificate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -35,6 +37,12 @@ public class NetworkTracker implements ITracker<Logger> {
 
     public NetworkTracker(boolean detectResponse) {
         this.detectResponse = detectResponse;
+    }
+
+    private static final Set<String> NETWORK_BLOCKED_PLUGINS = new HashSet<>();
+
+    public static Set<String> getNetworkBlockedPlugins() {
+        return NETWORK_BLOCKED_PLUGINS;
     }
 
     @SneakyThrows
@@ -385,6 +393,10 @@ public class NetworkTracker implements ITracker<Logger> {
                     "================================================";
 
             logger.info(toPrint);
+
+            if (getNetworkBlockedPlugins().contains(pluginName)) {
+                throw new IOException("Plugin " + pluginName + " is blocked from accessing the network.");
+            }
 
             return this.defaultSelector.select(uri);
         }

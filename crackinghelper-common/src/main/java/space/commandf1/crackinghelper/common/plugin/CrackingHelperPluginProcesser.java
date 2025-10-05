@@ -58,7 +58,7 @@ public class CrackingHelperPluginProcesser {
         val javaCodes = toReturn.listFiles();
         if (javaCodes != null) {
             Arrays.stream(javaCodes).filter(file -> file.getName().toLowerCase().endsWith(".autorun")).forEach(file -> {
-                Class<?> clazz;
+                Class<?> clazz = null;
                 try {
                     clazz = RuntimeUtil.loadClassWithSourceCode(
                             ListUtil.linesToString(Files.readAllLines(file.toPath())),
@@ -66,27 +66,29 @@ public class CrackingHelperPluginProcesser {
                             "AutoRun"
                     );
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace(System.err);
                 }
 
-                try {
-                    val mainMethod = clazz.getDeclaredMethod("main", String[].class);
-                    if ((mainMethod.getModifiers() & STATIC) == 0) {
-                        return;
-                    }
+                if (clazz != null) {
+                    try {
+                        val mainMethod = clazz.getDeclaredMethod("main", String[].class);
+                        if ((mainMethod.getModifiers() & STATIC) == 0) {
+                            return;
+                        }
 
-                    if ((mainMethod.getModifiers() & PUBLIC) == 0) {
-                        return;
-                    }
+                        if ((mainMethod.getModifiers() & PUBLIC) == 0) {
+                            return;
+                        }
 
-                    val lookup = MethodHandles.lookup();
-                    String[] arguments = new String[0];
-                    lookup.findStatic(clazz, "main", MethodType.methodType(void.class, String[].class))
-                            .asFixedArity()
-                            .invoke((Object) arguments);
-                } catch (NoSuchMethodException ignored) {
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
+                        val lookup = MethodHandles.lookup();
+                        String[] arguments = new String[0];
+                        lookup.findStatic(clazz, "main", MethodType.methodType(void.class, String[].class))
+                                .asFixedArity()
+                                .invoke((Object) arguments);
+                    } catch (NoSuchMethodException ignored) {
+                    } catch (Throwable e) {
+                        e.printStackTrace(System.err);
+                    }
                 }
             });
         }

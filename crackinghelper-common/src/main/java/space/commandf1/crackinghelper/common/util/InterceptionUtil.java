@@ -21,6 +21,14 @@ public class InterceptionUtil {
                 .findFirst());
     }
 
+    public static Optional<StackWalker.StackFrame> getCaller() {
+        return StackWalker.getInstance()
+                .walk(stackFrameStream -> stackFrameStream
+                        .skip(2)
+                        .findFirst()
+                );
+    }
+
     public static void retransformClasses(@NotNull Set<Class<?>> classes,
                                           @NotNull ClassFileTransformer transformer,
                                           @NotNull Instrumentation instrumentation) {
@@ -30,7 +38,7 @@ public class InterceptionUtil {
                 if (!ClassUtil.isLambda(clazz) && instrumentation.isModifiableClass(clazz)) {
                     try {
                         instrumentation.retransformClasses(clazz);
-                    } catch (UnmodifiableClassException e) {
+                    } catch (UnmodifiableClassException | InternalError e) {
                         System.out.println("Error retransforming class " + clazz.getName() + ": " + e.getMessage());
                     }
                 }
@@ -45,6 +53,7 @@ public class InterceptionUtil {
         String className = currentClass.getName();
         return className.equals(interceptedClass.getName()) ||
                 className.startsWith("java.lang.reflect.") ||
-                className.startsWith("net.bytebuddy.");
+                className.startsWith("net.bytebuddy.") ||
+                className.startsWith("space.commandf1.crackinghelper.common.util");
     }
 }
